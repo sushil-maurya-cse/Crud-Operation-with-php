@@ -1,34 +1,45 @@
 <?php
 include 'conn.php';
-if (isset($_POST['submit'])) {
-  $username = $_POST['username'];
-  $nickname = $_POST['nickname'];
-  $image = $_FILES['file'];
-  $filename = $image['name'];
-  $filepath = $image['tmp_name'];
-  $fileerror = $image['error'];
-  $designation = $_POST['designation'];
-  $dob = $_POST['dob'];
-  $field = $_POST['field'];
-  $gender = $_POST['gender'];
 
-  if ($fileerror == 0) {
-    $dest_file = 'uploads/' . $filename;
-    move_uploaded_file($filepath, $dest_file);
+// If submit button pressed
 
+if (isset($_POST['submit']))
+{
+    $username = $_POST['username'];
+    $nickname = $_POST['nickname'];
+    $image = $_FILES['file'];
+    $filename = $image['name'];
+    $filepath = $image['tmp_name'];
+    $fileerror = $image['error'];
+    $designation = $_POST['designation'];
+    $dob = $_POST['dob'];
+    $field = $_POST['field'];
+    $gender = $_POST['gender'];
+  
+ // If file is loaded successfully
+  
+    if ($fileerror == 0)
+    {
+        $dest_file = 'uploads/' . $filename;
+        move_uploaded_file($filepath, $dest_file);
 
-    $query = "INSERT INTO `crud_php` (`id`, `username`, `nickname`, `image`, `designation`, `dob`, `field`, `gender`) VALUES (NULL, '$username', '$nickname','$dest_file', '$designation', '$dob', '$field', '$gender')";
+        $query = "INSERT INTO `crud_php` (`id`, `username`, `nickname`, `image`, `designation`, `dob`, `field`, `gender`) VALUES (NULL, '$username', '$nickname','$dest_file', '$designation', '$dob', '$field', '$gender')";
 
-    $sql = mysqli_query($con, $query);
-  }
-  if ($sql) {
-    header('location:display.php');
-  } else {
-    echo "failed";
-  }
+        $sql = mysqli_query($con, $query);
+    }
+    if ($sql)
+    {
+        header('location:index.php');
+    }
+    else
+    {
+        echo "failed";
+    }
 }
 
 ?>
+
+<!-- HTML part starts here -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -41,64 +52,67 @@ if (isset($_POST['submit'])) {
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Insert</title>
+  
+  <!-- Internal css -->
   <style>
-    table {
+        table {
 
-      border-collapse: collapse;
-      border-spacing: 0;
-      width: 50%;
-      border: 1px solid #ddd;
-      border-radius: 50px;
-    }
+          border-collapse: collapse;
+          border-spacing: 0;
+          width: 50%;
+          border: 1px solid #ddd;
+          border-radius: 50px;
+        }
 
-    input {
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      padding: 2px;
-      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        input {
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          padding: 2px;
+          font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 
-    }
+        }
 
-    h1 {
-      margin-top: 10px;
-      width: 100%;
-      float: left;
-      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-      color: black;
+        h1 {
+          margin-top: 10px;
+          width: 100%;
+          float: left;
+          font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+          color: black;
 
-    }
+        }
 
-    th,
-    td {
-      text-align: left;
-      padding: 8px;
-    }
+        th,
+        td {
+          text-align: left;
+          padding: 8px;
+        }
 
-    tr {
-      justify-content: space-around;
-    }
+        tr {
+          justify-content: space-around;
+        }
 
-    tr:nth-child(even) {
-      background-color: #FFFFFF;
-      color: black;
-    }
+        tr:nth-child(even) {
+          background-color: #FFFFFF;
+          color: black;
+        }
 
-    tr:nth-child(odd) {
-      background-color: #100F0F;
-      color: #fff;
-    }
+        tr:nth-child(odd) {
+          background-color: #100F0F;
+          color: #fff;
+        }
   </style>
 </head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
-
 </script>
 
 <body>
   <?php
-  include_once 'db.php';
-  $query = "SELECT * FROM countries WHERE status = 1 ORDER BY country_name ASC";
-  $result = $db->query($query);
-  ?>
+include_once 'db.php';
+$query = "SELECT * FROM countries WHERE status = 1 ORDER BY country_name ASC";
+$result = $db->query($query);
+?>
+  
+<!-- Insert Form Started-->
   <table>
     <form method="post" enctype="multipart/form-data" name="myform">
       <div class="card">
@@ -153,55 +167,12 @@ if (isset($_POST['submit'])) {
             <label for="other">Other</label>
           </td>
         </tr>
-      
-
-  <tr>
+        <tr>
           <th colspan="2" style="text-align:center; color:#100F0F"><input type="submit" name="submit" value="Submit"></th>
         </tr>
     </form>
+<!-- Insert Form Ended-->
   </table>
-
-  <script>
-    // dropDown
-    $(document).ready(function() {
-      $('#country').on('change', function() {
-        var countryID = $(this).val();
-        if (countryID) {
-          $.ajax({
-            type: 'POST',
-            url: 'ajax-data-send.php',
-            data: 'country_id=' + countryID,
-
-            success: function(html) {
-              $('#state').html(html);
-              $('#city').html('<option value="">Select state first</option>');
-            }
-          });
-          console.log('country_id=' + countryID);
-        } else {
-          $('#state').html('<option value="">Select country first</option>');
-          $('#city').html('<option value="">Select state first</option>');
-        }
-      });
-
-      $('#state').on('change', function() {
-        var stateID = $(this).val();
-        if (stateID) {
-          $.ajax({
-            type: 'POST',
-            url: 'ajax-data-send.php',
-            data: 'state_id=' + stateID,
-            success: function(html) {
-              $('#city').html(html);
-            }
-          });
-        } else {
-          $('#city').html('<option value="">Select state first</option>');
-        }
-      });
-    });
-  </script>
-
 </body>
 
 </html>
